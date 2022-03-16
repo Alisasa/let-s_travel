@@ -1,117 +1,76 @@
-async function getPosts() {
-    return await fetch('http://localhost:3000/posts')
-        .then((response) => response.json())
-        .then((data) => data);
-}
-
-async function getCallbackRequests() {
-    return await fetch('http://localhost:3000/callback-requests')
-        .then((response) => response.json())
-        .then((data) => data);
-}
-
-async function getEmails() {
-    return await fetch('http://localhost:3000/emails')
-        .then((response) => response.json())
-        .then((data) => data);
-}
+let addPostBtn = document.querySelector('.create-post-btn');
+let logOutBtn = document.querySelector('.log-out-btn');
 
 document.addEventListener('DOMContentLoaded', async function() {
     addPosts();
     addCallbackRequests();
     addEmails();
+})
 
-    // CREATE POST
-    let addPostBtn = document.querySelector('.add-post');
-    let createPostBtn = document.querySelector('#v-pills-add-post-tab');
-    addPostBtn.addEventListener('click', () => createPostBtn.click());
+addPostBtn.addEventListener('click', function() {
+    let articlesTab = document.getElementById('v-pills-articles');
+    articlesTab.classList.remove('show');
+    articlesTab.classList.remove('active');
+    let createTab = document.getElementById('v-pills-create-post');
+    createTab.classList.add('show');
+    createTab.classList.add('active');
 })
 
 async function addPosts() {
     let posts = await getPosts();
-    let articles = document.querySelector('.articles-list tbody');
+    let articles = document.querySelector('.articles');
     articles.innerHTML = '';
     let i = 1;
     posts.forEach((post) => {
         let postHTML = `
-        <tr>
-            <td>${i++}<input class="id" type="hidden" value="${post.id}"></td>
-            <td class="title text-nowrap">${post.title}</td>
-            <td class="date text-nowrap">${post.date.substring(0, post.date.indexOf('T'))}</td>
-            <td class="country">${post.country}</td>
-            <td><button class="edit-btn btn btn-link p-0 text-decoration-none">Edit</button></td>
-            <td><button class="remove-btn btn btn-link p-0 text-decoration-none">X</button></td>
-        </tr>
-        `;
+        <article class="d-flex justify-content-between align-items-center article-inline">
+            <div class="num w5">${i++}</div>
+            <input class="id" type="hidden" value="${post.id}">
+            <div class="name w30">${post.title}</div>
+            <div class="date w30">${post.date}</div>
+            <div class="country w20">${post.country}</div>
+            <div class="edit w10"><button class="btn btn-link btn-edit">Edit</button></div>
+            <div class="remove w5"><button class="btn btn-link btn-remove">X</button></div>
+        </article>`;
         articles.insertAdjacentHTML('beforeend', postHTML);
     })
 }
-
 async function addCallbackRequests() {
     let requests = await getCallbackRequests();
-    let requestsBlock = document.querySelector('#v-pills-requests tbody');
+    let requestsBlock = document.querySelector('#v-pills-callback');
     requestsBlock.innerHTML = '';
     let i = 1;
     requests.forEach((request) => {
         let requestHTML = `
-        <tr>
-            <td>${i++}<input class="id" type="hidden" value="${request.id}"></td>
-            <td class="title text-nowrap">${request.phoneNumber}</td>
-            <td class="date text-nowrap">${request.date.substring(0, request.date.indexOf('T'))}</td>
-            <td><button class="remove-btn btn btn-link p-0 text-decoration-none">X</button></td>
-        </tr>
-        `;
+        <article class="d-flex justify-content-between align-items-center article-inline">
+            <div class="num w5">${i++}</div>
+            <input class="id" type="hidden" value="${request.id}">
+            <div class="name w60">${request.phoneNumber}</div>
+            <div class="date w30">${request.date}</div>
+            <div class="remove w5"><button class="btn btn-link btn-remove">X</button></div>
+        </article>`;
         requestsBlock.insertAdjacentHTML('beforeend', requestHTML);
     })
 }
-
 async function addEmails() {
-    let emails = await getEmails();
-    let emailsBlock = document.querySelector('#v-pills-mails tbody');
-    emailsBlock.innerHTML = '';
+    let requests = await getEmails();
+    let requestsBlock = document.querySelector('#v-pills-mails');
+    requestsBlock.innerHTML = '';
     let i = 1;
-    emails.forEach((email) => {
-        let emailHTML = `
-        <tr>
-            <td>${i++}<input class="id" type="hidden" value="${email.id}"></td>
-            <td class="name text-nowrap">${email.name}</td>
-            <td class="email text-nowrap">${email.email}</td>
-            <td class="date text-nowrap">${email.date.substring(0, email.date.indexOf('T'))}</td>
-            <td><button class="remove-btn btn btn-link p-0 text-decoration-none">X</button></td>
-        </tr>
-        <tr>
-            <td colspan="5" class="text">${email.text}</td>
-        </tr>
-        `;
-        emailsBlock.insertAdjacentHTML('beforeend', emailHTML);
+    requests.forEach((request) => {
+        let requestHTML = `
+        <article class="d-flex justify-content-between align-items-center article-inline">
+            <div class="num w5">${i++}</div>
+            <input class="id" type="hidden" value="${request.id}">
+            <div class="name w30">${request.name}</div>
+            <div class="email w30">${request.email}</div>
+            <div class="date w30">${request.date}</div>
+            <div class="remove w5"><button class="btn btn-link btn-remove">X</button></div>
+            <div class="text w100">${request.text}</div>
+        </article>`;
+        requestsBlock.insertAdjacentHTML('beforeend', requestHTML);
     })
 }
-
-let requestsBlock = document.querySelector('#v-pills-requests');
-
-requestsBlock.addEventListener('click', function(e) {
-    if(e.target.classList.contains('remove-btn')) {
-        let id = e.target.parentNode.parentNode.querySelector('.id').value;
-        fetch('http://localhost:3000/callback-requests/' + id, {
-            method: 'DELETE'
-        }).then((response) => response.text())
-        .then(() => window.history.go());
-    }
-})
-
-let emailsBlock = document.querySelector('#v-pills-mails');
-
-emailsBlock.addEventListener('click', function(e) {
-    if(e.target.classList.contains('remove-btn')) {
-        let id = e.target.parentNode.parentNode.querySelector('.id').value;
-        fetch('http://localhost:3000/emails/' + id, {
-            method: 'DELETE'
-        }).then((response) => response.text())
-        .then(() => window.history.go());
-    }
-})
-
-let logOutBtn = document.querySelector('.log-out-btn');
 
 logOutBtn.addEventListener('click', function() {
     document.cookie.split(";").forEach(function(c) { document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); });

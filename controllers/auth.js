@@ -1,5 +1,5 @@
 let jwt = require('jsonwebtoken');
-let secret = 'ehjfbheruyf';
+let secret = 'gew67dfgew';
 
 function generateToken(user) {
     let payload = {
@@ -10,12 +10,7 @@ function generateToken(user) {
 }
 
 function checkToken(token) {
-    try {
-        let result = jwt.verify(token, secret);
-        return result;
-    } catch(error) {
-        return false;
-    }
+    return jwt.verify(token, secret);
 }
 
 module.exports = { generateToken, checkToken };

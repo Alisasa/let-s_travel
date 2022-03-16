@@ -1,32 +1,25 @@
 let createForm = document.querySelector('.create-post-form');
-let title = document.querySelector('#title');
-let country = document.querySelector('#country');
-let imageURL = document.querySelector('#imageURL');
-let text = document.querySelector('#text');
-let imageFile = document.querySelector('#image-file');
-
+let createTitle = document.querySelector('#create-title');
+let createCountry = document.querySelector('#create-country');
+let createImageUrl = document.querySelector('#create-image-url');
+let createText = document.querySelector('#create-text');
+let createImageFile = document.querySelector('#create-image-file');
+ 
 createForm.addEventListener('submit', function(e) {
     e.preventDefault();
-    let createText = text.value;
-    let createDescription;
-    if(createText.indexOf('.') === -1) {
-        createDescription = createText;
-    } else {
-        createDescription = createText.substring(0, createText.indexOf('.') + 1);
-    }
+    let text = createText.value;
     let data = new FormData();
-    data.append('title', title.value);
-    data.append('country', country.value);
-    data.append('imageURL', imageURL.value);
-    data.append('text', createText);
-    data.append('description', createDescription);
-    data.append('imageFile', imageFile.files[0]);
+    data.append('title', createTitle.value);
+    data.append('country', createCountry.value);
+    data.append('imageUrl', createImageUrl.value);
+    data.append('text', text);
+    data.append('description', text.substring(0, text.indexOf('.') + 1));
+    data.append('imageFile', createImageFile.files[0]);
 
-    fetch('http://localhost:3000/posts', {
+    fetch('/posts', {
         method: 'POST',
         body: data
     }).then((response) => response.text()).then((data) => window.history.go());
-
 })
 
 function disableInput(input1, input2) {
@@ -37,5 +30,5 @@ function disableInput(input1, input2) {
     }
 }
 
-imageURL.addEventListener('change', () => disableInput(imageURL, imageFile));
-imageFile.addEventListener('change', () => disableInput(imageFile, imageURL));
+createImageUrl.addEventListener('change', function() {disableInput(this, createImageFile)});
+createImageFile.addEventListener('change', function() {disableInput(this, createImageUrl)});
